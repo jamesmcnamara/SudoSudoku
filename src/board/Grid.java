@@ -1,10 +1,6 @@
 package board;
 
-import java.io.PrintStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**CLASS:
  * Represents a a game board in a Sudoku Game
@@ -142,7 +138,7 @@ public class Grid {
 	 * @return Line initialized with the given value 
 	 */
 	private Line makeLine(int position, boolean row) {
-		ArrayList<Cell> Cells = new ArrayList<Cell>();
+		ArrayList<Cell> cells = new ArrayList<Cell>();
 		for (int i=0; i < 9; i++) {
 			if (row) {
 				cells.add(getCells().get(position * 9 + i));
@@ -315,78 +311,70 @@ public class Grid {
 	}
 
 	/**INITIALIZER:<br>
-	 * Sets this grid
-	 * @param paramArrayList
+	 * Sets this grid's list of boxes to the given list of boxes 
+	 * @param boxes ArrayList of boxes to set this grid's boxes to 
 	 */
-	public void setBoxes(ArrayList<Box> paramArrayList)
-	{
-		this.boxes = paramArrayList;
+	public void setBoxes(ArrayList<Box> boxes)	{
+		this.boxes = boxes;
 	}
 
-	public void setCells(ArrayList<Cell> paramArrayList)
-	{
-		this.cells = paramArrayList;
+	/**INITIALIZER:<br>
+	 * Sets this grid's list of cells to the given list of cells
+	 * @param cells ArrayList of cells to set this grid's cells to 
+	 */
+	public void setCells(ArrayList<Cell> cells) 	{
+		this.cells = cells;
 	}
 
-	public void setColumns(ArrayList<Line> paramArrayList)
-	{
-		this.columns = paramArrayList;
+	/**INITIALIZER:<br>
+	 * Sets this grid's list of columns to the given list of columns
+	 * @param cols ArrayList of columns to set this grid's columns to 
+	 */
+	public void setColumns(ArrayList<Line> cols) {
+		this.columns = cols;
 	}
 
-	public void setRows(ArrayList<Line> paramArrayList)
+	/**INITIALIZER:<br>
+	 * Sets this grid's list of rows to the given list of rows 
+	 * @param boxes ArrayList of rows to set this grid's rows to 
+	 */
+	public void setRows(ArrayList<Line> rows)
 	{
-		this.rows = paramArrayList;
+		this.rows = rows;
 	}
 
-	public void setValues(Integer[][] paramArrayOfInteger)
-	{
-		int i = 0;
-		if (i >= 9) {
-			return;
-		}
-		int j = 0;
-		for (;;)
-		{
-			if (j >= 9)
-			{
-				i++;
-				break;
-			}
-			try
-			{
-				((Cell)this.cells.get(j + i * 9)).setValue(paramArrayOfInteger[i][j].intValue());
-				j++;
-			}
-			catch (IndexOutOfBoundsException localIndexOutOfBoundsException)
-			{
-				System.out.println(localIndexOutOfBoundsException.getLocalizedMessage());
-				System.out.println("Values argument requires dimesions[9][9], but has dimensions[" + paramArrayOfInteger.length + "][" + paramArrayOfInteger[1].length + "]");
+	/**INITIALIZER:<br>
+	 * Sets the cells in this grid to each of the corresponding
+	 * values in the given integer array of arrays 
+	 * @param values 9 value Array of Integer Arrays; each containing 9
+	 * indices
+	 */
+	public void setValues(Integer[][] values) {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				this.cells.get(i * 9 + j).setValue(values[i][j]);
 			}
 		}
 	}
 
-	public boolean solved()
-	{
-		return (repOK()) && (getFilledCount() == 81);
+	/**EFFECT:<br>
+	 * Determines if this puzzle has been legally solved 
+	 * @return true if the puzzle has been assigned all 81, non-overlapping 
+	 * neighbors
+	 */
+	public boolean solved()	{
+		return repOK() && getFilledCount() == 81;
 	}
 
-	public String toString()
-	{
+	/**EFFECT:<br>
+	 * Returns a string of 81 characters; one for each value in the grid
+	 * @return String representation of the puzzles values
+	 */
+	public String toString() {
 		String str = "";
-		Iterator localIterator = getCells().iterator();
-		for (;;)
-		{
-			if (!localIterator.hasNext()) {
-				return str;
-			}
-			Cell localCell = (Cell)localIterator.next();
-			str = str + localCell.getValue();
+		for (Cell cell : getCells()) {
+			str += cell.getValue();
 		}
+		return str;
 	}
 }
-
-
-/* Location:           C:\Users\HAL\Documents\sudosudoku\com.example.helloopencv_1.0.apk\classes_dex2jar.jar
- * Qualified Name:     board.Grid
- * JD-Core Version:    0.7.0.1
- */

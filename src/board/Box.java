@@ -1,7 +1,6 @@
 package board;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**Represents a 3x3 box in a Sudoku board
  * 

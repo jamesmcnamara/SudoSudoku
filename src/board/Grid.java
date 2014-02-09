@@ -6,423 +6,383 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class Grid
-{
-  private ArrayList<Box> boxes = new ArrayList();
-  private ArrayList<Cell> cells = new ArrayList();
-  private ArrayList<Line> columns = new ArrayList();
-  private int filledCount;
-  private ArrayList<Line> rows = new ArrayList();
-  
-  public Grid()
-  {
-    for (int i = 0;; i++)
-    {
-      if (i >= 81)
-      {
-        makeBoxes();
-        makeLines();
-        return;
-      }
-      this.cells.add(new Cell(i, this));
-    }
-  }
-  
-  public Grid(Grid paramGrid)
-  {
-    this();
-    setValues(paramGrid.getValues());
-    Iterator localIterator = getCells().iterator();
-    for (;;)
-    {
-      if (!localIterator.hasNext()) {
-        return;
-      }
-      Cell localCell = (Cell)localIterator.next();
-      int i = localCell.getPosition();
-      localCell.setPossibilities(((Cell)paramGrid.getCells().get(i)).getPossibilities());
-    }
-  }
-  
-  private boolean checkRepLine(CellCollection paramCellCollection)
-  {
-    ArrayList localArrayList = getTrueArray();
-    boolean bool = true;
-    Iterator localIterator1 = paramCellCollection.getCells().iterator();
-    Iterator localIterator2;
-    Cell localCell;
-    do
-    {
-      if (!localIterator1.hasNext())
-      {
-        localIterator2 = paramCellCollection.getCells().iterator();
-        if (localIterator2.hasNext()) {
-          break;
-        }
-        return bool;
-      }
-      localCell = (Cell)localIterator1.next();
-    } while (localCell.getValue() == 0);
-    if ((bool) && (((Boolean)localArrayList.get(localCell.getValue())).booleanValue())) {}
-    for (bool = true;; bool = false)
-    {
-      localArrayList.set(localCell.getValue(), Boolean.valueOf(false));
-      break;
-    }
-    Iterator localIterator3 = ((Cell)localIterator2.next()).getPossibilities().values().iterator();
-    label135:
-    if (localIterator3.hasNext())
-    {
-      Integer localInteger = (Integer)localIterator3.next();
-      if ((!bool) || (!((Boolean)localArrayList.get(localInteger.intValue())).booleanValue())) {
-        break label184;
-      }
-    }
-    label184:
-    for (bool = true;; bool = false)
-    {
-      break label135;
-      break;
-    }
-  }
-  
-  private static ArrayList<Boolean> getTrueArray()
-  {
-    ArrayList localArrayList = new ArrayList();
-    for (int i = 0;; i++)
-    {
-      if (i > 9) {
-        return localArrayList;
-      }
-      localArrayList.add(Boolean.valueOf(true));
-    }
-  }
-  
-  public static String integerArrayToString(Integer[][] paramArrayOfInteger)
-  {
-    String str = "";
-    int i = paramArrayOfInteger.length;
-    int j = 0;
-    if (j >= i) {
-      return str;
-    }
-    Integer[] arrayOfInteger = paramArrayOfInteger[j];
-    int k = arrayOfInteger.length;
-    for (int m = 0;; m++)
-    {
-      if (m >= k)
-      {
-        j++;
-        break;
-      }
-      Integer localInteger = arrayOfInteger[m];
-      str = str + localInteger;
-    }
-  }
-  
-  private Box makeBox(int paramInt)
-  {
-    ArrayList localArrayList = new ArrayList();
-    int i = 27 * (paramInt / 3) + 3 * (paramInt % 3);
-    int j = 0;
-    if (j >= 3) {
-      return new Box(i, localArrayList);
-    }
-    for (int k = 0;; k++)
-    {
-      if (k >= 3)
-      {
-        j++;
-        break;
-      }
-      int m = k + (i + j * 9);
-      localArrayList.add((Cell)this.cells.get(m));
-    }
-  }
-  
-  private void makeBoxes()
-  {
-    int i = 0;
-    if (i >= 9) {
-      return;
-    }
-    Box localBox = makeBox(i);
-    Iterator localIterator = localBox.getCells().iterator();
-    for (;;)
-    {
-      if (!localIterator.hasNext())
-      {
-        this.boxes.add(localBox);
-        i++;
-        break;
-      }
-      ((Cell)localIterator.next()).setBox(localBox);
-    }
-  }
-  
-  private Line makeLine(int paramInt, boolean paramBoolean)
-  {
-    ArrayList localArrayList = new ArrayList();
-    int j;
-    if (paramBoolean)
-    {
-      j = 0;
-      if (j < 9) {}
-    }
-    for (;;)
-    {
-      return new Line(paramInt, localArrayList, paramBoolean);
-      localArrayList.add((Cell)this.cells.get(j + paramInt * 9));
-      j++;
-      break;
-      for (int i = 0; i < 9; i++) {
-        localArrayList.add((Cell)this.cells.get(paramInt + i * 9));
-      }
-    }
-  }
-  
-  private void makeLines()
-  {
-    int i = 0;
-    if (i >= 9) {
-      return;
-    }
-    Line localLine1 = makeLine(i, true);
-    Iterator localIterator1 = localLine1.getCells().iterator();
-    label24:
-    Line localLine2;
-    Iterator localIterator2;
-    if (!localIterator1.hasNext())
-    {
-      this.rows.add(localLine1);
-      localLine2 = makeLine(i, false);
-      localIterator2 = localLine2.getCells().iterator();
-    }
-    for (;;)
-    {
-      if (!localIterator2.hasNext())
-      {
-        this.columns.add(localLine2);
-        i++;
-        break;
-        ((Cell)localIterator1.next()).setRow(localLine1);
-        break label24;
-      }
-      ((Cell)localIterator2.next()).setColumn(localLine2);
-    }
-  }
-  
-  public static Integer[][] stringToIntegerArray(String paramString)
-  {
-    if (paramString.length() == 81)
-    {
-      ArrayList localArrayList = new ArrayList();
-      Integer[][] arrayOfInteger = (Integer[][])Array.newInstance(Integer.class, new int[] { 9, 9 });
-      int i = 0;
-      int j = 0;
-      if (j >= 9) {
-        return arrayOfInteger;
-      }
-      localArrayList.clear();
-      for (int k = 0;; k++)
-      {
-        if (k >= 9)
-        {
-          localArrayList.toArray(arrayOfInteger[j]);
-          j++;
-          break;
-        }
-        localArrayList.add(Integer.valueOf(Integer.parseInt(paramString.substring(i, i + 1))));
-        i++;
-      }
-    }
-    throw new RuntimeException("Values string is not long enough");
-  }
-  
-  public boolean equals(Grid paramGrid)
-  {
-    return this.cells.equals(paramGrid.cells);
-  }
-  
-  public ArrayList<Box> getBoxes()
-  {
-    return this.boxes;
-  }
-  
-  public ArrayList<Cell> getCells()
-  {
-    return this.cells;
-  }
-  
-  public ArrayList<Line> getColumns()
-  {
-    return this.columns;
-  }
-  
-  public int getFilledCount()
-  {
-    return this.filledCount;
-  }
-  
-  public int getPossibilitiesCount()
-  {
-    int i = 0;
-    Iterator localIterator = getCells().iterator();
-    for (;;)
-    {
-      if (!localIterator.hasNext()) {
-        return i;
-      }
-      i += ((Cell)localIterator.next()).getPossibilities().size();
-    }
-  }
-  
-  public ArrayList<Line> getRows()
-  {
-    return this.rows;
-  }
-  
-  public Integer[][] getValues()
-  {
-    Integer[][] arrayOfInteger = (Integer[][])Array.newInstance(Integer.class, new int[] { 9, 9 });
-    int i = 0;
-    if (i >= 9) {
-      return arrayOfInteger;
-    }
-    for (int j = 0;; j++)
-    {
-      if (j >= 9)
-      {
-        i++;
-        break;
-      }
-      arrayOfInteger[i][j] = Integer.valueOf(((Cell)getCells().get(j + i * 9)).getValue());
-    }
-  }
-  
-  public void incrementFilled()
-  {
-    this.filledCount = (1 + this.filledCount);
-  }
-  
-  public String prettyPrint()
-  {
-    String str = "";
-    Iterator localIterator = getRows().iterator();
-    for (;;)
-    {
-      if (!localIterator.hasNext()) {
-        return str;
-      }
-      Line localLine = (Line)localIterator.next();
-      str = str + localLine.toString();
-    }
-  }
-  
-  public boolean repOK()
-  {
-    boolean bool = true;
-    Iterator localIterator1 = getRows().iterator();
-    Iterator localIterator2;
-    Iterator localIterator3;
-    if (!localIterator1.hasNext())
-    {
-      localIterator2 = getColumns().iterator();
-      if (!localIterator2.hasNext())
-      {
-        localIterator3 = getBoxes().iterator();
-        if (localIterator3.hasNext()) {
-          break label126;
-        }
-        return bool;
-      }
-    }
-    else
-    {
-      Line localLine1 = (Line)localIterator1.next();
-      if ((bool) && (checkRepLine(localLine1))) {}
-      for (bool = true;; bool = false) {
-        break;
-      }
-    }
-    Line localLine2 = (Line)localIterator2.next();
-    if ((bool) && (checkRepLine(localLine2))) {}
-    for (bool = true;; bool = false) {
-      break;
-    }
-    label126:
-    Box localBox = (Box)localIterator3.next();
-    if ((bool) && (checkRepLine(localBox))) {}
-    for (bool = true;; bool = false) {
-      break;
-    }
-  }
-  
-  public void setBoxes(ArrayList<Box> paramArrayList)
-  {
-    this.boxes = paramArrayList;
-  }
-  
-  public void setCells(ArrayList<Cell> paramArrayList)
-  {
-    this.cells = paramArrayList;
-  }
-  
-  public void setColumns(ArrayList<Line> paramArrayList)
-  {
-    this.columns = paramArrayList;
-  }
-  
-  public void setRows(ArrayList<Line> paramArrayList)
-  {
-    this.rows = paramArrayList;
-  }
-  
-  public void setValues(Integer[][] paramArrayOfInteger)
-  {
-    int i = 0;
-    if (i >= 9) {
-      return;
-    }
-    int j = 0;
-    for (;;)
-    {
-      if (j >= 9)
-      {
-        i++;
-        break;
-      }
-      try
-      {
-        ((Cell)this.cells.get(j + i * 9)).setValue(paramArrayOfInteger[i][j].intValue());
-        j++;
-      }
-      catch (IndexOutOfBoundsException localIndexOutOfBoundsException)
-      {
-        System.out.println(localIndexOutOfBoundsException.getLocalizedMessage());
-        System.out.println("Values argument requires dimesions[9][9], but has dimensions[" + paramArrayOfInteger.length + "][" + paramArrayOfInteger[1].length + "]");
-      }
-    }
-  }
-  
-  public boolean solved()
-  {
-    return (repOK()) && (getFilledCount() == 81);
-  }
-  
-  public String toString()
-  {
-    String str = "";
-    Iterator localIterator = getCells().iterator();
-    for (;;)
-    {
-      if (!localIterator.hasNext()) {
-        return str;
-      }
-      Cell localCell = (Cell)localIterator.next();
-      str = str + localCell.getValue();
-    }
-  }
+/**CLASS:
+ * Represents a a game board in a Sudoku Game
+ * @author james
+ *
+ */
+public class Grid {
+	private ArrayList<Box> boxes = new ArrayList<Box>();
+	private ArrayList<Cell> cells = new ArrayList<Cell>();
+	private ArrayList<Line> columns = new ArrayList<Line>();
+	private ArrayList<Line> rows = new ArrayList<Line>();
+	private int filledCount;
+
+	/**CONSTRUCTOR:<br>
+	 * Creates a new Grid with empty cells and initializes the relations
+	 */
+	public Grid() {
+		for (int i = 0; i < 81; i++) {
+			this.cells.add(new Cell(i, this));
+		}
+
+		makeBoxes();
+		makeLines();
+	}
+
+	/**CONSTRUCTOR:<br>
+	 * Creates a deep clone of the given Grid
+	 * @param grid Grid to clone
+	 */
+	public Grid(Grid grid) {
+		this();
+		setValues(grid.getValues());
+
+		//update any other possibilities which have been eliminated 
+		for (Cell cell : getCells()) {
+			int i = cell.getPosition();
+			cell.setPossibilities(grid.getCells().get(i).getPossibilities());
+		}
+	}
+
+	/**REPOK:<br>
+	 * Check that the given CellCollection does not violate the representation
+	 * invariants of a Sudoku puzzle (each value 1-9 appearing only once)
+	 * @param coll A CellCollection in this puzzle to check for violations
+	 * @return true if this is a valid cell collection
+	 */
+	private boolean checkRepLine(CellCollection coll) {
+		ArrayList<Boolean> trues = getTrueArray();
+		boolean repOk = true;
+
+		//Make sure that no value appears twice in the collection
+		for (Cell cell : coll.getCells()) {
+			if (cell.getValue() != 0) {
+				repOk &= trues.get(cell.getValue());
+				trues.set(cell.getValue(), false);
+			}
+		}
+
+		//Make sure that no cell has a value in their list of possibilities 
+		//that another cell in the collection has already assumed
+		for (Cell cell : coll.getCells()) {
+			for (Integer poss : cell.getPossibilities()) {
+				repOk &= trues.get(poss);
+			}
+		}
+
+		return repOk;
+	}
+
+	/**EFFECT:<br>
+	 * Returns an ArrayList of 10 true values
+	 * @return an ArrayList of 10 true values
+	 */
+	private static ArrayList<Boolean> getTrueArray() {
+		ArrayList<Boolean> trues = new ArrayList<Boolean>();
+		for (int i = 0; i <=9; i++) {
+			trues.add(true);
+		}
+
+		return trues;
+	}
+
+	/**EFFECT:<br>
+	 * Returns a string representing this Grid
+	 * @param values an Integer array of arrays, all of length 9
+	 * @return a string with the values of the arrays extracted in 
+	 * alphabetical order
+	 */
+	public static String integerArrayToString(Integer[][] values) {
+		String str = "";
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				str += values[i][j];
+			}
+		}
+		return str;
+	}
+
+	/**INITIALIZER:<br>
+	 * Initializes the relationships between the cells in this grid
+	 * that belong to the box with the given position
+	 * @param position from left to right, top to bottom
+	 * @return the Box with the given position, and initialized connections
+	 */
+	private Box makeBox(int position) {
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+		int seed = 27 * (position / 3) + 3 * (position % 3);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				int memberPosition = seed + (i * 9) + j;
+				cells.add(getCells().get(memberPosition));
+			}
+		}
+		return new Box(position, cells);
+	}
+
+	/**INITIALIZER:<br>
+	 * Initializes each of the boxes in this Grid
+	 */
+	private void makeBoxes() {
+		for (int i = 0; i < 9; i++) {
+			Box box = makeBox(i);
+			for (Cell cell : box.getCells()) {
+				cell.setBox(box);
+				boxes.add(box);
+			}
+		}
+	}
+
+	/**INITIALIZER:<br>
+	 * Creates a line in this grid with the given position and initializes
+	 * the references to the given cells 
+	 * @param position from 0-8
+	 * @param row is this Line a row?
+	 * @return Line initialized with the given value 
+	 */
+	private Line makeLine(int position, boolean row) {
+		ArrayList<Cell> Cells = new ArrayList<Cell>();
+		for (int i=0; i < 9; i++) {
+			if (row) {
+				cells.add(getCells().get(position * 9 + i));
+			}
+			else {
+				cells.add(getCells().get(i * 9 + position));
+			}
+		}
+		return new Line(position, cells, row);
+	}
+
+	/**INITIALIZER:<br>
+	 * Initializes the line and their relationships in this grid
+	 */
+	private void makeLines() {
+		for (int i = 0; i < 9; i++) {
+			Line row = makeLine(i, true);
+			Line col = makeLine(i, false);
+			for (Cell cell : row.getCells()) {
+				cell.setRow(row);
+			}
+			for (Cell cell : col.getCells()) {
+				cell.setColumn(col);
+			}
+			rows.add(row);
+			columns.add(col);
+		}
+	}
+
+	/**EFFECT:<br>
+	 * Returns an integer array of arrays from the string representing
+	 * the values of the cell
+	 * @param values string of 81 characters concatenated, with 0s 
+	 * representing blanks 
+	 * @return a 9 value Array of 9 value integer arrays, filled from 
+	 * the strings values in the relative positions
+	 */
+	public static Integer[][] stringToIntegerArray(String values) {
+		if (values.length() == 81) {
+			ArrayList<Integer> valuesList = new ArrayList<Integer>();
+			Integer[][] valuesArray = new Integer[9][9];
+			for (int i = 0; i < 0; i++)	{
+				for (int j = 0; j < 0; j++) {
+					int pos = i * 9 + j;
+					valuesList.add(Integer.parseInt(values.substring(pos, pos + 1)));
+				}
+				valuesList.toArray(valuesArray[i]);
+			}
+			return valuesArray;
+		}
+		throw new RuntimeException("Values string is not long enough");
+	}
+
+	/**EFFECT:<br>
+	 * Determines if the given Grid's array of Cells matches
+	 * this Grid's
+	 * @param grid a Grid to compare this Grid to 
+	 * @return true if every cell in the given grid is equal to every
+	 * pairwise cell in this grid
+	 */
+	public boolean equals(Grid grid) {
+		return this.cells.equals(grid.cells);
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns this Grid's Boxes
+	 * @return this Grid's Boxes as an ArrayList
+	 */
+	public ArrayList<Box> getBoxes() {
+		return this.boxes;
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns this Grid's Cells
+	 * @return this Grid's Cells as an ArrayList
+	 */
+	public ArrayList<Cell> getCells() {
+		return this.cells;
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns this Grid's Cells
+	 * @return this Grid's Cells as an ArrayList
+	 */
+	public ArrayList<Line> getColumns()	{
+		return this.columns;
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns the number of Cells in this Grid that have 
+	 * been assigned a value
+	 * @return this count of filled cells
+	 */
+	public int getFilledCount()	{
+		return this.filledCount;
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns the count of the number possibilities that exist
+	 * @return the count of possible values that exist
+	 */
+	public int getPossibilitiesCount() {
+		int possibilityValues= 0;
+		for (Cell cell : getCells()) {
+			possibilityValues += cell.getPossibilities().size();
+		}
+		return possibilityValues;
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns this Grid's Rows
+	 * @return this Grid's Rows as an ArrayList
+	 */
+	public ArrayList<Line> getRows() {
+		return this.rows;
+	}
+
+	/**ACCESSOR:<br>
+	 * Returns the values of this Grid's Cells
+	 * @return the value of this Grid's Cells as a Integer Array
+	 */
+	public Integer[][] getValues() {
+		Integer[][] valuesArray = new Integer[9][9];
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				valuesArray[i][j] = getCells().get(i * 9 + j).getValue();
+			}
+		}
+		return valuesArray;
+	}
+
+	/**EFFECT:<br>
+	 * Increments the count of cells that have been assigned values
+	 */
+	public void incrementFilled() {
+		filledCount++;
+	}
+
+	/**EFFECT:<br>
+	 * Generates a human readable output of the Grid in it's current
+	 * state
+	 * @return String of the values of this Grid
+	 */
+	public String prettyPrint() {
+		String str = "";
+		for (Line row : getRows()) {
+			str += row.toString();
+		}
+		return str;
+	}
+
+	/**REP-OK:
+	 * Determines whether Grid conforms to the rules that are required of a 
+	 * valid Sudoku Puzzle
+	 * @return true if no two neighboring cells have the same value and no
+	 * cell has the possibility of assuming a value it's neighbor has
+	 */
+	public boolean repOK() {
+		boolean repOk = true;
+		for (Line row : getRows()) {
+			repOk &= checkRepLine(row);
+		}
+		for (Line col : getColumns()) {
+			repOk &= checkRepLine(col);
+		}
+		for (Box box : getBoxes()) {
+			repOk &= checkRepLine(box);
+		}
+		return repOk;
+	}
+
+	/**INITIALIZER:<br>
+	 * Sets this grid
+	 * @param paramArrayList
+	 */
+	public void setBoxes(ArrayList<Box> paramArrayList)
+	{
+		this.boxes = paramArrayList;
+	}
+
+	public void setCells(ArrayList<Cell> paramArrayList)
+	{
+		this.cells = paramArrayList;
+	}
+
+	public void setColumns(ArrayList<Line> paramArrayList)
+	{
+		this.columns = paramArrayList;
+	}
+
+	public void setRows(ArrayList<Line> paramArrayList)
+	{
+		this.rows = paramArrayList;
+	}
+
+	public void setValues(Integer[][] paramArrayOfInteger)
+	{
+		int i = 0;
+		if (i >= 9) {
+			return;
+		}
+		int j = 0;
+		for (;;)
+		{
+			if (j >= 9)
+			{
+				i++;
+				break;
+			}
+			try
+			{
+				((Cell)this.cells.get(j + i * 9)).setValue(paramArrayOfInteger[i][j].intValue());
+				j++;
+			}
+			catch (IndexOutOfBoundsException localIndexOutOfBoundsException)
+			{
+				System.out.println(localIndexOutOfBoundsException.getLocalizedMessage());
+				System.out.println("Values argument requires dimesions[9][9], but has dimensions[" + paramArrayOfInteger.length + "][" + paramArrayOfInteger[1].length + "]");
+			}
+		}
+	}
+
+	public boolean solved()
+	{
+		return (repOK()) && (getFilledCount() == 81);
+	}
+
+	public String toString()
+	{
+		String str = "";
+		Iterator localIterator = getCells().iterator();
+		for (;;)
+		{
+			if (!localIterator.hasNext()) {
+				return str;
+			}
+			Cell localCell = (Cell)localIterator.next();
+			str = str + localCell.getValue();
+		}
+	}
 }
 
 

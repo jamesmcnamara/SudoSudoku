@@ -2,11 +2,6 @@ package algorithms;
 
 import board.Cell;
 import board.Grid;
-import board.SparseArrayIter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**CLASS:<br>
  * Multithreaded processor which creates a new thread of execution for 
@@ -17,7 +12,7 @@ import java.util.Iterator;
  *
  */
 public class Solver
-extends Thread {
+		extends Thread {
 	boolean continueSearch;
 	boolean found;
 	Grid grid;
@@ -118,48 +113,37 @@ extends Thread {
 		return this.parent.continueSearch;
 	}
 
-	/**
+	/**EFFECT:<br>
 	 * 
 	 */
 	public void run() {
 		if (parentSignalsContinue()) {
 			int minPossibilities = 9;
 			Cell minCell = null;
+			
+			//identify the most constrained cell; the cell with the least
+			//possibilities
 			for (Cell cell : grid.getCells()) {
 				if (cell.getPossibilities().size() < minPossibilities) {
 					minPossibilities = cell.getPossibilities().size();
 					minCell = cell;
 				}
 			}
-			
-			Grid localGrid = new Grid(this.grid);
-			((Cell)localGrid.getCells().get(((Cell)localObject2).getPosition())).setValue(localInteger.intValue());
-			new Solver(localGrid, this).start();
-			if (!localIterator2.hasNext())
-			{
-				return;
-				label150:
-					Cell localCell = (Cell)localIterator1.next();
-				int j = localCell.getPossibilities().size();
-				if ((j == 0) || (j >= i)) {
-					break;
-				}
-				i = j;
-				localObject2 = localCell;
-				localObject1 = localCell.getPossibilities().values();
-				break;
+
+			//for each possibility that the most constrained cell has, create  
+			//a new thread of execution where the cell takes on that value 
+			//and continue the search from there
+			Grid clone = new Grid(this.grid);
+			for (Integer poss : minCell.getPossibilities())  {
+				clone.getCells().get(minCell.getPosition()).setValue(poss);
+				Solver s = new Solver(clone, this);
+				s.start();
 			}
 		}
 	}
 
-	public void start()
-	{
+	//Begins a search on this solver's sudoku puzzle
+	public void start()	{
 		AlgorithmSuite.run(this.grid, this);
 	}
 }
-
-
-/* Location:           C:\Users\HAL\Documents\sudosudoku\com.example.helloopencv_1.0.apk\classes_dex2jar.jar
- * Qualified Name:     algorithms.Solver
- * JD-Core Version:    0.7.0.1
- */

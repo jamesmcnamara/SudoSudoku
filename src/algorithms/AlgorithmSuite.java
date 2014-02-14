@@ -1,100 +1,69 @@
 package algorithms;
 
 import board.Grid;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-public class AlgorithmSuite
-{
-  public static boolean checkGridStatus(Grid paramGrid, Solver paramSolver)
-  {
-    if (paramGrid.solved())
-    {
-      paramSolver.foundItBitches(paramGrid);
-      return true;
-    }
-    if (!paramGrid.repOK()) {
-      paramSolver.killThreadAndChildren();
-    }
-    return false;
-  }
-  
-  public static void loopRun(Grid[] paramArrayOfGrid)
-  {
-    long l1 = 0L;
-    long l2 = 1000000L;
-    long l3 = 0L;
-    int i = 0;
-    int j = 0;
-    ArrayList localArrayList = new ArrayList();
-    int k = paramArrayOfGrid.length;
-    int m = 0;
-    Iterator localIterator;
-    if (m >= k)
-    {
-      System.out.println("*************STATS*************");
-      System.out.println("Total Puzzles:" + i);
-      System.out.println("Solved Puzzles: " + j);
-      localIterator = localArrayList.iterator();
-    }
-    for (;;)
-    {
-      if (!localIterator.hasNext())
-      {
-        long l5 = l1 / localArrayList.size();
-        System.out.println("Average time: " + l5 + " milliseconds");
-        System.out.println("Minimum time: " + l2 + " milliseconds");
-        System.out.println("Maximum time: " + l3 + " milliseconds");
-        return;
-        Grid localGrid = paramArrayOfGrid[m];
-        i++;
-        long l4 = System.currentTimeMillis();
-        Solver localSolver = new Solver(localGrid, null);
-        localSolver.start();
-        while (localSolver.isAlive()) {}
-        if (localSolver.getGrid().solved())
-        {
-          j++;
-          System.out.println(localSolver.getGrid());
-        }
-        localArrayList.add(Long.valueOf(System.currentTimeMillis() - l4));
-        m++;
-        break;
-      }
-      Long localLong = (Long)localIterator.next();
-      l1 += localLong.longValue();
-      l2 = Math.min(l2, localLong.longValue());
-      l3 = Math.max(l3, localLong.longValue());
-    }
-  }
-  
-  public static void run(Grid paramGrid, Solver paramSolver)
-  {
-    if (checkGridStatus(paramGrid, paramSolver)) {
-      return;
-    }
-    new Solver(paramGrid, paramSolver).run();
-  }
-  
-  public static String solvePuzzle(String paramString)
-  {
-    return solvePuzzle(Grid.stringToIntegerArray(paramString));
-  }
-  
-  public static String solvePuzzle(Integer[][] paramArrayOfInteger)
-  {
-    Grid localGrid = new Grid();
-    localGrid.setValues(paramArrayOfInteger);
-    Solver localSolver = new Solver(localGrid, null);
-    localSolver.start();
-    while (localSolver.isAlive()) {}
-    return localSolver.getGrid().toString();
-  }
+//Starts and manages the heuristic search for a solution to the given puzzle   
+public class AlgorithmSuite {
+
+	/**EFFECT<br>
+	 * Determines whether this grid has been solved or not
+	 * Also checks whether the grid has violated any of the representation
+	 * invariants of Sudoku puzzle (repeated values in a single line) and
+	 * if so, kills the given thread of execution 
+	 * @param grid Sudoku puzzle to check if solved
+	 * @param solver thread of execution that contains the given grid
+	 * @return
+	 */
+	public static boolean checkGridStatus(Grid grid, Solver solver) {
+		if (grid.solved()) {
+			solver.foundItBitches(grid);
+			return true;
+		}
+
+		if (!grid.repOK()) {
+			solver.killThreadAndChildren();
+		}
+		return false;
+	}
+
+	/**EFFECT:<br>
+	 * Begins the given solver search on the given grid
+	 * @param grid the Sudoku puzzle to run on 
+	 * @param solver the current thread of execution
+	 */
+	public static void run(Grid grid, Solver solver) {
+		if (checkGridStatus(grid, solver)) {
+			return;
+		}
+		new Solver(grid, solver).run();
+	}
+
+	/**EFFECT:<br>
+	 * Returns the solution of the given description of a Sudoku
+	 * puzzle as a String with the i-th character representing
+	 * the value in the ith cell
+	 * @param puzzle an 81 character string of values, with the i-th value
+	 * representing the given value at the i-th cell. If no value is given or 
+	 * known represent the space with a 0 
+	 */
+	public static String solvePuzzle(String puzzle) {
+		return solvePuzzle(Grid.stringToIntegerArray(puzzle));
+	}
+
+	/**EFFECT:<br>
+	 * Returns the solution of the given description of a Sudoku
+	 * puzzle as a String with the i-th character representing
+	 * the value in the ith cell
+	 * @param values an length 9 array of length 9 integer arrays, with the 
+	 * i,j-th value representing the given value at the i * 9 + j-th cell
+	 * If no value is given or known, represent the space with a 0 
+	 */
+	public static String solvePuzzle(Integer[][] values) {
+		Grid grid = new Grid();
+		grid.setValues(values);
+		Solver solver = new Solver(grid, null);
+		solver.start();
+		while (solver.isAlive()) {}
+		return solver.getGrid().toString();
+	}
 }
-
-
-/* Location:           C:\Users\HAL\Documents\sudosudoku\com.example.helloopencv_1.0.apk\classes_dex2jar.jar
- * Qualified Name:     algorithms.AlgorithmSuite
- * JD-Core Version:    0.7.0.1
- */

@@ -1,5 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">SudoSudoku</string>
-
+    <string name="app_name">Sudo Sudoku</string>
+    <string name="action_settings">Settings</string>
+    <string name="grab_button_text">Grab Puzzle</string>
+    <string name="pic_descrip">CV manipulated image</string>
+    <string name="title_activity_board_view">BoardView</string>
+    <string name="solve_button_text">Solve!</string>
+    <string name="sudo">sudo</string>
+    <string name="sudoku">sudoku</string>
 </resources>

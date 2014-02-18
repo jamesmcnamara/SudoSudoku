@@ -27,178 +27,169 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.highgui.Highgui;
 
-public class MainActivity
-  extends Activity
-{
-  public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SudoSudoku/";
-  public static final String GRABBED_BOARD = "Photo taken";
-  private static final String TAG = "HelloOpenCV::Activity";
-  public static final String TRAINED_DATA = "tessdata/eng.traineddata";
-  protected Button button;
-  private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this)
-  {
-    public void onManagerConnected(int paramAnonymousInt)
-    {
-      switch (paramAnonymousInt)
-      {
-      default: 
-        super.onManagerConnected(paramAnonymousInt);
-        return;
-      }
-      Log.i("HelloOpenCV::Activity", "OpenCV Manager Intialized Successfully");
-    }
-  };
-  protected String path;
-  protected boolean taken;
-  
-  private void initLayout()
-  {
-    setContentView(2130903041);
-    TextView localTextView1 = (TextView)findViewById(2130968583);
-    TextView localTextView2 = (TextView)findViewById(2130968584);
-    Button localButton = (Button)findViewById(2130968586);
-    this.button = ((Button)findViewById(2130968585));
-    setFontUbuntu(localTextView1);
-    setFontUbuntu(localTextView2);
-    setFontUbuntu(localButton);
-    setFontUbuntu(this.button);
-    this.path = (DATA_PATH + "/sudoku.jpg");
-  }
-  
-  public void displayDialog(String paramString)
-  {
-    new AlertDialog.Builder(this).setTitle("Error").setMessage(paramString).setPositiveButton("Retake Photo", new DialogInterface.OnClickListener()
-    {
-      public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt)
-      {
-        paramAnonymousDialogInterface.cancel();
-      }
-    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-    {
-      public void onClick(DialogInterface paramAnonymousDialogInterface, int paramAnonymousInt)
-      {
-        Intent localIntent = new Intent(jdField_this, MainActivity.class);
-        MainActivity.this.startActivity(localIntent);
-      }
-    }).create().show();
-  }
-  
-  protected void onActivityResult(int paramInt1, int paramInt2, Intent paramIntent)
-  {
-    Log.i("HelloOpenCV::Activity", "Result was " + paramInt2);
-    if (paramInt2 == -1)
-    {
-      onPhotoTaken();
-      return;
-    }
-    Log.v("HelloOpenCV::Activity", "User cancelled sudoku grab");
-  }
-  
-  protected void onCreate(Bundle paramBundle)
-  {
-    int i = 0;
-    String[] arrayOfString = new String[2];
-    arrayOfString[0] = DATA_PATH;
-    arrayOfString[1] = (DATA_PATH + "tessdata/");
-    int j = arrayOfString.length;
-    if ((i < j) || (!new File(DATA_PATH + "tessdata/eng.traineddata").exists())) {}
-    for (;;)
-    {
-      try
-      {
-        InputStream localInputStream = getAssets().open("tessdata/eng.traineddata");
-        localFileOutputStream = new FileOutputStream(DATA_PATH + "tessdata/eng.traineddata");
-        arrayOfByte = new byte[1024];
-        k = localInputStream.read(arrayOfByte);
-        if (k > 0) {
-          continue;
-        }
-        localInputStream.close();
-        localFileOutputStream.close();
-        Log.v("HelloOpenCV::Activity", "Copied Trained Data file to local SD");
-      }
-      catch (Exception localException)
-      {
-        FileOutputStream localFileOutputStream;
-        byte[] arrayOfByte;
-        int k;
-        String str;
-        File localFile;
-        Log.e("HelloOpenCV::Activity", "Could not copy trained data to SD: " + localException);
-        continue;
-      }
-      super.onCreate(paramBundle);
-      initLayout();
-      Log.v("HelloOpenCV::Activity", "On create completed");
-      return;
-      str = arrayOfString[i];
-      localFile = new File(str);
-      if (!localFile.exists())
-      {
-        if (!localFile.mkdirs())
-        {
-          Log.v("HelloOpenCV::Activity", "Error Creating: " + str);
-          return;
-        }
-        Log.v("HelloOpenCV::Activity", str + " created successfully");
-      }
-      i++;
-      break;
-      localFileOutputStream.write(arrayOfByte, 0, k);
-    }
-  }
-  
-  public boolean onCreateOptionsMenu(Menu paramMenu)
-  {
-    getMenuInflater().inflate(2131230721, paramMenu);
-    return true;
-  }
-  
-  protected void onPhotoTaken()
-  {
-    try
-    {
-      CellOCR localCellOCR = new CellOCR(new BoardProcessor(Highgui.imread(this.path, 0)).processPhoto(), DATA_PATH);
-      Intent localIntent = new Intent(this, BoardView.class);
-      localIntent.putExtra("values", localCellOCR.getPuzzleText());
-      startActivity(localIntent);
-      return;
-    }
-    catch (RuntimeException localRuntimeException)
-    {
-      displayDialog(localRuntimeException.getMessage());
-    }
-  }
-  
-  public void onResume()
-  {
-    super.onResume();
-    OpenCVLoader.initAsync("2.4.5", this, this.mLoaderCallback);
-  }
-  
-  public void setFontUbuntu(TextView paramTextView)
-  {
-    paramTextView.setTypeface(Typeface.createFromAsset(getAssets(), "UbuntuMono-B.ttf"));
-  }
-  
-  public void skip(View paramView)
-  {
-    Intent localIntent = new Intent(this, BoardView.class);
-    localIntent.putExtra("values", "000009000002805370000030040030007000007490050000200000050000700800051030041900580");
-    startActivity(localIntent);
-  }
-  
-  public void startCameraActivity(View paramView)
-  {
-    Uri localUri = Uri.fromFile(new File(this.path));
-    Intent localIntent = new Intent("android.media.action.IMAGE_CAPTURE");
-    localIntent.putExtra("output", localUri);
-    startActivityForResult(localIntent, 0);
-  }
-}
-
-
-/* Location:           C:\Users\HAL\Documents\sudosudoku\com.example.helloopencv_1.0.apk\classes_dex2jar.jar
- * Qualified Name:     mainActivity.MainActivity
- * JD-Core Version:    0.7.0.1
+/**CLASS:<br>
+ * Handles the Main display of the app, as well as startup and destroy
+ * @author james
  */
+public class MainActivity
+extends Activity {
+
+	public static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SudoSudoku/";
+	public static final String GRABBED_BOARD = "Photo taken";
+	private static final String TAG = "HelloOpenCV::Activity";
+	public static final String TRAINED_DATA = "tessdata/eng.traineddata";
+	protected Button button;
+
+	protected String path;
+	protected boolean taken;
+
+	private void initLayout() {
+		setContentView(2130903041);
+		TextView localTextView1 = (TextView)findViewById(2130968583);
+		TextView localTextView2 = (TextView)findViewById(2130968584);
+		Button localButton = (Button)findViewById(2130968586);
+		this.button = ((Button)findViewById(2130968585));
+		setFontUbuntu(localTextView1);
+		setFontUbuntu(localTextView2);
+		setFontUbuntu(localButton);
+		setFontUbuntu(this.button);
+		this.path = (DATA_PATH + "/sudoku.jpg");
+	}
+
+	/**ERROR:<br>
+	 * Alert the user if the photo could not be digitized, and gives 
+	 * the user the option to retake the photo or exit the activity 
+	 * @param exception the error the was raised
+	 */
+	public void displayDialog(String exception) {
+		final Context cxt = this;
+		new AlertDialog.Builder(this).setTitle("Error").setMessage(exception).setPositiveButton("Retake Photo", 
+				new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int which)
+			{
+				dialog.cancel();
+			}
+		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface dialog, int which)
+			{
+				Intent intent = new Intent(cxt, MainActivity.class);
+				MainActivity.this.startActivity(intent);
+			}
+		}).create().show();
+	}
+
+	/**EFFECT:<br>
+	 * If the photo was successfully digitized, start the next activities
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.i(TAG, "Result was " + resultCode);
+		if (resultCode == -1) {
+			onPhotoTaken();
+			return;
+		}
+		Log.v("HelloOpenCV::Activity", "User cancelled sudoku grab");
+	}
+
+	/**OVERRIDE:<br>
+	 * 
+	 */
+	protected void onCreate(Bundle bundle) {
+		int i = 0;
+		String[] paths = {DATA_PATH, DATA_PATH + "tessdata/"};
+
+		//Make sure that the file with all of the training data for Tesseract
+		//has been copied over to the SD card
+		for (String path : paths) {
+			File f = new File (path);
+			if (! f.exists()) {
+				f.mkdirs();
+			}
+			try {
+				if (!new File(DATA_PATH + TRAINED_DATA).exists()) {
+
+					AssetManager assetManager = getAssets();
+					InputStream ocrData = getAssets().open(TRAINED_DATA);
+					OutputStream out = new FileOutputStream(DATA_PATH + TRAINED_DATA);
+					byte [] buffer = new byte[1024];
+					int amt; 
+					while((amt = ocrData.read(buffer)) > 0) {
+						out.write(buffer);
+					}
+					ocrData.close();
+					out.close();
+
+				}
+			} catch (Exception e) {
+				Log.v(TAG, "Could not copy trained data to SD");
+			}
+			
+			super.onCreate(bundle);
+			Log.v(TAG, "On create completed successfully");
+		}
+	}
+
+	public boolean onCreateOptionsMenu(Menu paramMenu)
+	{
+		getMenuInflater().inflate(2131230721, paramMenu);
+		return true;
+	}
+
+	/**CALLBACK:<br>
+	 * After the user takes a picture, attempts to start the board processor and OCR engine
+	 * to digitize the board, and start the BoardViewActivity
+	 * Catches errors and displays them to the user
+	 */
+	protected void onPhotoTaken() {
+		try	{
+			CellOCR ocr = new CellOCR(new BoardProcessor(Highgui.imread(this.path)).processPhoto(), DATA_PATH);
+			Intent intent = new Intent(this, BoardView.class);
+			intent.putExtra("values", ocr.getPuzzleText());
+			startActivity(intent);
+		}
+		catch (RuntimeException e) {
+			displayDialog(e.getMessage());
+		}
+	}
+
+	/**OVERRIDE:<br>
+	 * Call super
+	 */
+	public void onResume() {
+		super.onResume();
+	}
+
+	/**EFFECT:<br>
+	 * Sets the given text view to have the greatest font ever devised,
+	 * Ubuntu Monospaced Bold
+	 * @param textView
+	 */
+	public void setFontUbuntu(TextView textView)
+	{
+		textView.setTypeface(Typeface.createFromAsset(getAssets(), "UbuntuMono-B.ttf"));
+	}
+
+	/**EFFECT:<br>
+	 * If the user clicks the skip button, activate the BoardView activity
+	 * with a dummy Sudoku board hard coded in 
+	 * @param view the current view
+	 */
+	public void skip(View view) {
+		Intent intent = new Intent(this, BoardView.class);
+		intent.putExtra("values", "000009000002805370000030040030007000007490050000200000050000700800051030041900580");
+		startActivity(intent);
+	}
+
+	/**EFFECT:<br>
+	 * Starts the user's phone's capture image activity, and tracks whether
+	 * it ends with a user taking a picture or not
+	 * @param view the current view
+	 */
+	public void startCameraActivity(View view) {
+		Uri puzzle = Uri.fromFile(new File(this.path));
+		Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+		intent.putExtra("output", puzzle);
+		startActivityForResult(intent, 0);
+	}
+}

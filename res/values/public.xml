@@ -50,6 +50,4 @@
     <public type="string" name="sudoku" id="0x7f060007" />
     <public type="style" name="AppBaseTheme" id="0x7f070000" />
     <public type="style" name="AppTheme" id="0x7f070001" />
-    <public type="menu" name="board_view" id="0x7f080000" />
-    <public type="menu" name="hello_open_cv" id="0x7f080001" />
 </resources>
